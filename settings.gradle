@@ -1,0 +1,4 @@
+rootProject.name = 'saashop'
+include(':services:order')
+include(':services:payment')
+include(':services:delivery')
