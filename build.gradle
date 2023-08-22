@@ -27,15 +27,16 @@ subprojects {
 
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-web'
-		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		implementation 'org.springframework.boot:spring-boot-starter-logging'
+		implementation("org.springframework.cloud:spring-cloud-starter-aws-messaging:2.2.6.RELEASE")
+
+		implementation(files("./libs/spring-plain.jar"))
+		implementation("ch.qos.logback.contrib:logback-json-classic:0.1.5")
+		implementation("ch.qos.logback.contrib:logback-jackson:0.1.5")
+
+		implementation 'com.amazonaws:aws-xray-recorder-sdk-core:2.14.0'
+		implementation 'com.amazonaws:aws-xray-recorder-sdk-aws-sdk:2.14.0'
 	}
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
