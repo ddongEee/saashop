@@ -17,9 +17,11 @@ public class MessageConsumer {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private static final ObjectMapper mapper = new ObjectMapper();
     private final TenantAwareThreadPoolTaskExecutor asyncTaskExecutor;
+    private final DdbClient ddbClient;
 
-    public MessageConsumer(final TenantAwareThreadPoolTaskExecutor asyncTaskExecutor) {
+    public MessageConsumer(TenantAwareThreadPoolTaskExecutor asyncTaskExecutor, DdbClient ddbClient) {
         this.asyncTaskExecutor = asyncTaskExecutor;
+        this.ddbClient = ddbClient;
     }
 
     @SqsListener(value = "techsummit-paid-queue", deletionPolicy = SqsMessageDeletionPolicy.NEVER)
@@ -27,9 +29,10 @@ public class MessageConsumer {
         asyncTaskExecutor.submit(headers, () -> {
             try {
                 Thread.sleep(500);
-                TestMessage bootstrap = mapper.readValue(message, TestMessage.class);
-                log.info("### Consume message : {}", bootstrap.toString());
-                log.info("### Started to delivering");
+                TestMessage testMessage = mapper.readValue(message, TestMessage.class);
+                log.info("### [{}] Consume message : {}", testMessage.getOrderId(), testMessage.getTestMessage());
+                ddbClient.putItemInTable(testMessage.orderId, "DELIVERED");
+                log.info("### [{}] Started to delivering", testMessage.getOrderId());
             } catch (Exception e) {
                 log.error("[{}] Consume error : {}", this.getClass().getSimpleName(), e.getMessage());
             } finally {
@@ -39,6 +42,7 @@ public class MessageConsumer {
     }
 
     public static class TestMessage {
+        String orderId;
         String testMessage;
 
         public TestMessage() {}
@@ -47,10 +51,8 @@ public class MessageConsumer {
             return testMessage;
         }
 
-        @Override
-        public String toString() {
-            return this.testMessage;
+        public String getOrderId() {
+            return orderId;
         }
-
     }
 }

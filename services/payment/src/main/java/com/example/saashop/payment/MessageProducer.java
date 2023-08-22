@@ -15,23 +15,24 @@ public class MessageProducer {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private static final ObjectMapper mapper = new ObjectMapper();
     private final TenantAwareQueueMessagingTemplate queueMessagingTemplate;
-    private final String bootstrapQueue;
+    private final String queue;
 
     public MessageProducer(TenantAwareQueueMessagingTemplate queueMessagingTemplate,
-                           @Value("${cloud.aws.queue.paid-name}") String bootstrapQueue) {
+                           @Value("${cloud.aws.queue.paid-name}") String queue) {
         this.queueMessagingTemplate = queueMessagingTemplate;
-        this.bootstrapQueue = bootstrapQueue;
+        this.queue = queue;
     }
 
     public void produce(TestMessage testMessage) throws JsonProcessingException {
         String payload = mapper.writeValueAsString(testMessage);
         Message<String> message = MessageBuilder.withPayload(payload).build();
-        log.info("### publish message : {}", testMessage.toString());
-        queueMessagingTemplate.send(bootstrapQueue, message);
+        log.info("### [{}] publish message : {}", testMessage.getOrderId(), testMessage.getTestMessage());
+        queueMessagingTemplate.send(queue, message);
     }
 
 
     public static class TestMessage {
+        String orderId;
         String testMessage;
 
         public TestMessage() {}
@@ -40,14 +41,14 @@ public class MessageProducer {
             return testMessage;
         }
 
-        @Override
-        public String toString() {
-            return this.testMessage;
+        public String getOrderId() {
+            return orderId;
         }
 
-        public static TestMessage createTestMessage() {
+        public static TestMessage createMessage(final String orderId, final String msg) {
             TestMessage message = new TestMessage();
-            message.testMessage = "This is test message";
+            message.orderId = orderId;
+            message.testMessage = msg;
             return message;
         }
     }

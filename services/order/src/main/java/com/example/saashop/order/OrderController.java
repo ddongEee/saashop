@@ -7,38 +7,39 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Locale;
+import java.util.UUID;
+
 @RestController
 public class OrderController {
-    private final Logger log = LoggerFactory.getLogger(getClass());
     private final OrderService orderService;
 
     public OrderController(final OrderService orderService) {
         this.orderService = orderService;
     }
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "hello world!";
-    }
-
     @GetMapping("/order")
     public String order() throws JsonProcessingException {
-        log.info("### order start");
         return orderService.doOrder();
     }
 
     @Service
     public static final class OrderService {
+        private final Logger log = LoggerFactory.getLogger(getClass());
         private final MessageProducer producer;
+        private final DdbClient ddbClient;
 
-        public OrderService(MessageProducer producer) {
+        public OrderService(MessageProducer producer, DdbClient ddbClient) {
             this.producer = producer;
+            this.ddbClient = ddbClient;
         }
 
         public String doOrder() throws JsonProcessingException {
-            producer.produce(MessageProducer.TestMessage.createTestMessage());
-//            RestTemplate restTemplate = new RestTemplate();
-//            restTemplate.getForObject("http://localhost:8081/payment", String.class);
+            final String orderId = UUID.randomUUID().toString();
+            log.info("### [{}] order start",orderId);
+            ddbClient.putItemInTable(orderId, "ORDERED");
+            final String message = "done to order";
+            producer.produce(MessageProducer.TestMessage.createMessage(orderId, message));
             return "done";
         }
     }
