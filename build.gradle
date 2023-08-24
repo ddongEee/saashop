@@ -15,6 +15,7 @@ repositories {
 	mavenCentral()
 }
 
+
 // 특정 자바 프로젝트만.. 아래 포함할것
 subprojects {
 	apply plugin: 'java'
@@ -28,7 +29,9 @@ subprojects {
 	dependencies {
 		implementation("org.springframework.boot:spring-boot-starter-web")
 		implementation("org.springframework.boot:spring-boot-starter-logging")
+		implementation("org.springframework.boot:spring-boot-starter-actuator")
 		implementation("org.springframework.cloud:spring-cloud-starter-aws-messaging:2.2.6.RELEASE")
+		implementation("io.awspring.cloud:spring-cloud-starter-aws-parameter-store-config:2.4.4")
 		implementation("com.amazonaws:aws-java-sdk-dynamodb:1.12.353")
 
 		implementation(files("./libs/spring-plain.jar"))
