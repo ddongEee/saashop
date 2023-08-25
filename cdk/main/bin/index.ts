@@ -28,7 +28,7 @@ const osProps: osStackProps = {
 
 const openSearchStack = new OpenSearchStack(
   app,
-  'OpenSearchStack6',
+  'OpenSearchStack',
   osProps,
   mainProfile,
   mainRegion,
@@ -38,7 +38,7 @@ const openSearchStack = new OpenSearchStack(
 
 const pipelineStack = new PipelineStack(
   app,
-  `PipelineStack6-${targetProfile}`,
+  `PipelineStack-${targetProfile}`,
   { env: { account: mainAccount, region: targetRegion } },
   mainProfile,
   targetProfile,

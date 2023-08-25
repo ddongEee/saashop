@@ -52,21 +52,6 @@ export class OpenSearchStack extends cdk.Stack {
       })
     );
 
-    /**
-     * Nginx Construct for public access
-     */
-    // new Nginx(
-    //   this,
-    //   id + '-nginx',
-    //   mainProfile,
-    //   this.vpc,
-    //   osDomain.domainEndpoint,
-    //   sg.openSearchSg,
-    //   props.nginxProxyInstanceType,
-    //   props.nginxProxyInstanceNubmer,
-    //   props.elbDomain
-    // );
-
     this.osDomainEndpoint = osDomain.domainEndpoint;
     this.osDomainName = osDomain.domainName;
 
