@@ -1,0 +1,40 @@
+{
+  "Capacity": {
+    "AvailableZones": 3,
+    "MasterNode": {
+      "Count": 3,
+      "Type": "c6g.2xlarge.search"
+    },
+    "DataNode": {
+      "Count": 3,
+      "Type": "c6g.2xlarge.search"
+    },
+    "WarmNode": {
+      "Count": 2,
+      "Type": "ultrawarm1.medium.search"
+    },
+    "EbsVoluemSize": 300
+  },
+  "Security": {
+    "MasterUserName": "admin"
+  },
+  "Network": {
+    "VpcEnabled": false,
+    "VpcId": "vpc-08ea6dd530d8dbcea",
+    "Subnets": [
+      {
+        "Id": "subnet-0595abe6b5ea6448b",
+        "Az": "ap-southeast-2a"
+      },
+      {
+        "Id": "subnet-01d7e297c359f386d",
+        "Az": "ap-southeast-2b"
+      },
+      {
+        "Id": "subnet-0d5afa2d6a0c73b33",
+        "Az": "ap-southeast-2c"
+      }
+    ],
+    "SecurityGroupId": "sg-05a9ed69a59f0d507"
+  }
+}

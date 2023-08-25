@@ -1,0 +1,37 @@
+version: "2"
+s3-log-pipeline:
+  source:
+    s3:
+      acknowledgments: true
+      notification_type: "sqs"
+      compression: "none"
+      codec:
+        newline:
+      sqs:
+        queue_url:
+        maximum_messages: 10
+        visibility_timeout: "300s"
+      aws:
+        region:
+        sts_role_arn:
+  processor:
+    - parse_json:
+    - delete_entries:
+        with_keys: ["s3"]
+    - date:
+        destination: "@prepper_arrived"
+        from_time_received: true
+  sink:
+    - opensearch:
+        hosts:
+          -
+        aws:
+          sts_role_arn:
+          region:
+        index:
+        dlq:
+          s3:
+            bucket:
+            key_path_prefix: "s3-log-pipeline/dlq"
+            region:
+            sts_role_arn:
