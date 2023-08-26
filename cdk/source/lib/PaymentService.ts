@@ -1,11 +1,10 @@
 import { Construct } from 'constructs';
 import { Code, Function, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
-import { Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { RemovalPolicy } from 'aws-cdk-lib';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { generateLogGroup, setParameterStore } from './common/utils';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
-import { LogRetention, RetentionDays } from 'aws-cdk-lib/aws-logs';
 
 export class PaymentService {
   public readonly paymentQueue;

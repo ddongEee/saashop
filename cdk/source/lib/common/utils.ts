@@ -1,6 +1,6 @@
 import { RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { IVpc, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { FilterPattern, LogGroup, LogRetention, RetentionDays, SubscriptionFilter } from 'aws-cdk-lib/aws-logs';
+import { FilterPattern, LogGroup, RetentionDays, SubscriptionFilter } from 'aws-cdk-lib/aws-logs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import * as destinations from 'aws-cdk-lib/aws-logs-destinations';
 import { Stream } from 'aws-cdk-lib/aws-kinesis';
@@ -25,9 +25,7 @@ export const setParameterStore = (scope: any, id: string, name: string, value: s
 export function getOpensearchVpc(scope: Stack, id: string): IVpc {
   const vpc = Vpc.fromLookup(scope, 'ImportVPC-' + id, {
     isDefault: false,
-    tags: {
-      'opensearch-vpc': 'true',
-    },
+    tags: { 'opensearch-vpc': 'true' },
     subnetGroupNameTag: 'Private subnet',
   });
 

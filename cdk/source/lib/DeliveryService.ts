@@ -1,6 +1,16 @@
 import { Repository } from 'aws-cdk-lib/aws-ecr';
 import { DockerImageAsset } from 'aws-cdk-lib/aws-ecr-assets';
-import { Cluster, Compatibility, FargateService, TaskDefinition } from 'aws-cdk-lib/aws-ecs';
+import {
+  Cluster,
+  Compatibility,
+  ContainerDefinition,
+  ContainerImage,
+  FargateService,
+  FargateTaskDefinition,
+  LogDriver,
+  Protocol,
+  TaskDefinition,
+} from 'aws-cdk-lib/aws-ecs';
 import { Role } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import * as ecrdeploy from 'cdk-ecr-deployment';
@@ -20,12 +30,40 @@ export class DeliveryService {
       dest: new ecrdeploy.DockerImageName(deliveryImageEcr.repositoryUri),
     });
 
-    generateLogGroup(scope, id + 'DeliveryServiceLogGroup', 'ecs', logDestinationArn);
+    const deliveryLogGroup = generateLogGroup(scope, id + 'DeliveryServiceLogGroup', 'ecs', logDestinationArn);
 
-    const deliveryTaskDefinition = new TaskDefinition(scope, id + 'DeliveryTaskDefinition', {
-      compatibility: Compatibility.FARGATE,
+    const deliveryTaskDefinition = new FargateTaskDefinition(scope, id + 'DeliveryTaskDefinition', {
       taskRole: ecsTaskRole,
     });
+
+    const appContainer = new ContainerDefinition(scope, id + 'DeliveryAppContainer', {
+      image: ContainerImage.fromEcrRepository(deliveryImageEcr),
+      taskDefinition: deliveryTaskDefinition,
+      logging: LogDriver.awsLogs({
+        logGroup: deliveryLogGroup,
+        streamPrefix: 'deliveryService',
+      }),
+    });
+
+    appContainer.addPortMappings({
+      hostPort: 8080,
+      containerPort: 8080,
+    });
+
+    const xrayContainer = new ContainerDefinition(scope, id + 'XrayContainer2', {
+      image: ContainerImage.fromRegistry('amazon/aws-xray-daemon'),
+      taskDefinition: deliveryTaskDefinition,
+      logging: LogDriver.awsLogs({
+        logGroup: deliveryLogGroup,
+        streamPrefix: 'xray',
+      }),
+    });
+    xrayContainer.addPortMappings({
+      protocol: Protocol.UDP,
+      hostPort: 2000,
+      containerPort: 2000,
+    });
+
     new FargateService(scope, id + 'DeliveryService', {
       taskDefinition: deliveryTaskDefinition,
       cluster: ecsCluster,
