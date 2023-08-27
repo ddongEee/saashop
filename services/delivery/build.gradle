@@ -1,3 +1,0 @@
-wrapper(type: Wrapper){
-   gradleVersion = '8.1.1'
-}
