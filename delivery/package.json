@@ -1,0 +1,16 @@
+{
+  "name": "saashop-delivery-service",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "@hdall/express": "file:../../heimdall/express/hdall-express-0.0.2.tgz",
+    "properties-reader": "^2.2.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "nodemon": "^2.0.22"
+  }
+}
