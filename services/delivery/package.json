@@ -6,8 +6,11 @@
     "start": "npm install hdall-express-0.0.2.tgz && node app.js"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.398.0",
+    "@aws-sdk/client-ssm": "^3.398.0",
     "@hdall/express": "file:hdall-express-0.0.2.tgz",
-    "properties-reader": "^2.2.0"
+    "properties-reader": "^2.2.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",

@@ -6,4 +6,6 @@
  */
 export const consts = {
     UNKNOWN: 'unknown',
+    CONSUME_TARGET_SQS: '/jihye/delivery-consuming-sqs',
+    TARGET_DDB_TABLE: '/jihye/saashoptable'
 };
