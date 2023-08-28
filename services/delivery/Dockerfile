@@ -1,18 +1,24 @@
 # syntax=docker/dockerfile:experimental
-FROM --platform=linux/amd64 gradle:7.3-jdk17 as build  
-WORKDIR /workspace/app
+# FROM --platform=linux/amd64 node:18-alpine
+FROM node:18-alpine
+
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+
+WORKDIR /usr/src/app
+
+COPY hdall-express-0.0.2.tgz ./
+COPY package.json ./
+
+RUN npm config set strict-ssl false
+RUN npm install
+RUN npm install hdall-express-0.0.2.tgz
 
 COPY . .
 
-RUN chmod +x gradlew
-RUN --mount=type=cache,target=/root/.m2 ./gradlew build -DskipTests
-RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+EXPOSE 80
+EXPOSE 443
 
-FROM --platform=linux/amd64 gradle:7.3-jdk17  
+CMD ["node", "app.js"]
 
-VOLUME /tmp
-ARG DEPENDENCY=/workspace/app/target/dependency
-COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
-COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java","-cp","app:app/lib/*","com.example.saashop.delivery.DeliveryApplication"]
+
