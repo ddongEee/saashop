@@ -1,0 +1,11 @@
+# lock files
+**/package-lock.json
+
+# build output
+layers/
+
+# archive
+extensions.zip
+
+# for local
+**.tgz
