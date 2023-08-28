@@ -1,9 +1,11 @@
+// TODO: import aws-xray-sdk
 import { SSMClient, GetParametersCommand } from '@aws-sdk/client-ssm';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 
 const region = process.env.AWS_REGION;
+// TODO: instrument each AWS SDK client using the AWSXRay.captureAWSv3Client method
 const ssmClient = new SSMClient({ region: region });
 const sqsClient = new SQSClient({ region: region });
 const ddbClient = new DynamoDBClient({ region: region });

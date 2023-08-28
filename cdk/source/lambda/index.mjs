@@ -1,5 +1,9 @@
 import { getResourceParameters, updateOrderStatus, sendMessage } from './service/service.mjs';
 
+// TODO: import heimdall sdk and log config
+
+// TODO: create logger
+
 let DDB_TABLE_NAME, QUEUE_URL;
 
 export const handler = async (event, context) => {
@@ -10,6 +14,7 @@ export const handler = async (event, context) => {
   }
 
   try {
+    // TODO: Replace all existing console.log() statements in the Lambda function to appropriate log levels like logger.info(), logger.error(), etc.
     console.log('Hello from Lambda');
     console.debug('Hello from Lambda');
     console.error('Hello from Lambda');
