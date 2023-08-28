@@ -118,7 +118,7 @@ modules.xml
 
 ### Gradle ###
 .gradle
-build/
+# build/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -133,7 +133,7 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 ### Gradle Patch ###
-**/build/
+# **/build/
 
 # Eclipse Gradle plugin generated files
 # Eclipse Core
@@ -147,12 +147,12 @@ gradle-app.setting
 
 
 
-/build/
+# /build/
 
 HELP.md
 !gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+# !**/src/main/**/build/
+# !**/src/test/**/build/
 
 ### STS ###
 .apt_generated
@@ -192,7 +192,7 @@ HELP.md
 # Edit at https://www.toptal.com/developers/gitignore?templates=gradle
 
 ### Gradle ###
-!src/**/build/
+# !src/**/build/
 
 # Avoid ignore Gradle wrappper properties
 !gradle-wrapper.properties
@@ -204,7 +204,7 @@ HELP.md
 # End of https://www.toptal.com/developers/gitignore/api/gradle
 
 # Ignore Gradle build output directory
-build
+# build
 
 ## Ignore vscode config
 **/.history/

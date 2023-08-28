@@ -1,0 +1,14 @@
+{
+  "Version" : "2012-10-17",
+  "Statement" : [
+    {
+      "Sid" : "",
+      "Effect" : "Allow",
+      "Principal" : {
+        "AWS" : "REPLACED_BY_TARGET_ACCOUNT"
+      },
+      "Action" : "logs:PutSubscriptionFilter",
+      "Resource" : "REPLACED_BY_DESTINATION_ARN"
+    }
+  ]
+}
