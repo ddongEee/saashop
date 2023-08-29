@@ -15,17 +15,19 @@ export const handler = async (event, context) => {
 
   try {
     // TODO: Replace all existing console.log() statements in the Lambda function to appropriate log levels like logger.info(), logger.error(), etc.
-    console.log('Hello from Lambda');
+    console.info('I am Suyeon. I turned out to be babo !!! hahahah!!!');
     console.debug('Hello from Lambda');
     console.error('Hello from Lambda');
     console.warn('Hello from Lambda');
+
+    const orderId = JSON.parse(event.Records[0].body).orderId;
 
     // Update DDB
     const currentDate = new Date().toISOString();
     const ddbParams = {
       TableName: DDB_TABLE_NAME,
       Key: {
-        orderId: event.orderId,
+        orderId,
       },
       UpdateExpression: 'SET event = list_append(event, :paidEvent), lastUpdatedAt = :currentTime',
       // ExpressionAttributeNames: {
@@ -41,13 +43,12 @@ export const handler = async (event, context) => {
     const ddbResult = await updateOrderStatus(ddbParams);
     console.log('ddb result: ', ddbResult);
 
+    const messageBody = { orderId };
+
     // Send Message
     const sqsParams = {
       QueueUrl: QUEUE_URL,
-      MessageAttributes: {
-        key: 'value',
-      },
-      MessageBody: 'hello',
+      MessageBody: JSON.stringify(messageBody),
     };
     const sqsResult = await sendMessage(sqsParams);
     console.log('sqs result: ', sqsResult);
