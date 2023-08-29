@@ -46,8 +46,8 @@ export class DeliveryService {
     });
 
     appContainer.addPortMappings({
-      hostPort: 8080,
-      containerPort: 8080,
+      hostPort: 80,
+      containerPort: 80,
     });
 
     const xrayContainer = new ContainerDefinition(scope, id + 'XrayContainer2', {

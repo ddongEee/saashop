@@ -4,7 +4,7 @@ import { Construct } from 'constructs';
 import * as ecrdeploy from 'cdk-ecr-deployment';
 import path = require('path');
 import { Queue } from 'aws-cdk-lib/aws-sqs';
-import { RemovalPolicy, Stack } from 'aws-cdk-lib';
+import { CfnOutput, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { generateLogGroup, setParameterStore } from './common/utils';
 import { ApplicationLoadBalancedFargateService } from 'aws-cdk-lib/aws-ecs-patterns';
 import {
@@ -97,6 +97,14 @@ export class OrderService {
       },
       loadBalancerName: id + 'alb',
       listenerPort: 80,
+    });
+
+    orderService.targetGroup.configureHealthCheck({ path: '/actuator/health' });
+
+    new CfnOutput(scope, id + '-export-alb-dns', {
+      value: orderService.loadBalancer.loadBalancerDnsName,
+      description: 'Sample Application Endpoint',
+      exportName: 'alb-dns-endpoint',
     });
   }
 }
