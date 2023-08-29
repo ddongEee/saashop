@@ -4,7 +4,7 @@ import { Construct } from 'constructs';
 import * as ecrdeploy from 'cdk-ecr-deployment';
 import path = require('path');
 import { Queue } from 'aws-cdk-lib/aws-sqs';
-import { RemovalPolicy } from 'aws-cdk-lib';
+import { RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { generateLogGroup, setParameterStore } from './common/utils';
 import { ApplicationLoadBalancedFargateService } from 'aws-cdk-lib/aws-ecs-patterns';
 import {
@@ -28,6 +28,7 @@ export class OrderService {
     ecsTaskRole: Role,
     logDestinationArn: string
   ) {
+    const stackRegion = Stack.of(scope).region;
     const orderImage = new DockerImageAsset(scope, id + 'OrderImage', {
       directory: path.join(__dirname, '../../../services/order/'),
     });
@@ -63,6 +64,7 @@ export class OrderService {
         logGroup: orderServiceLogGroup,
         streamPrefix: 'orderService',
       }),
+      environment: { SOURCE_REGION: stackRegion },
     });
 
     appContainer.addPortMappings({
