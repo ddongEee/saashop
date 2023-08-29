@@ -15,7 +15,7 @@ export const handler = async (event, context) => {
 
   try {
     // TODO: Replace all existing console.log() statements in the Lambda function to appropriate log levels like logger.info(), logger.error(), etc.
-    console.info('I am Suyeon. I turned out to be babo !!! hahahah!!!');
+    console.log('Event from OrderService is', JSON.parse(event.Records[0].body));
     console.debug('Hello from Lambda');
     console.error('Hello from Lambda');
     console.warn('Hello from Lambda');
