@@ -99,6 +99,6 @@ export class OrderService {
       listenerPort: 80,
     });
 
-    orderService.targetGroup.configureHealthCheck({ path: '/health' });
+    orderService.targetGroup.configureHealthCheck({ path: '/order' });
   }
 }
