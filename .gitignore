@@ -213,7 +213,7 @@ HELP.md
 
 coverage
 docs
-bin/
+# bin/
 
 ### VS Code ###
 .vscode/
