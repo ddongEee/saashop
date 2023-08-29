@@ -1,7 +1,7 @@
 package com.example.saashop.order.configuration;
 
-import com.amazon.sdk.spring.common.message.TenantAwareQueueMessagingTemplate;
-import com.amazon.sdk.spring.common.message.TenantAwareThreadPoolTaskExecutor;
+import com.amazon.sdk.spring.common.message.ContextAwareQueueMessagingTemplate;
+import com.amazon.sdk.spring.common.message.ContextAwareThreadPoolTaskExecutor;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
@@ -40,8 +40,8 @@ public class SQSConfig {
     }
 
     @Bean
-    public TenantAwareQueueMessagingTemplate queueMessagingTemplate(final Environment environment, final AWSCredentialsProvider awsCredentialsProvider) {
-        return new TenantAwareQueueMessagingTemplate(amazonSQSAsync(environment, awsCredentialsProvider), environment);
+    public ContextAwareQueueMessagingTemplate queueMessagingTemplate(final Environment environment, final AWSCredentialsProvider awsCredentialsProvider) {
+        return new ContextAwareQueueMessagingTemplate(amazonSQSAsync(environment, awsCredentialsProvider), environment);
     }
 
     @Bean
@@ -70,13 +70,13 @@ public class SQSConfig {
     }
 
     @Bean
-    public TenantAwareThreadPoolTaskExecutor tenantAwareThreadPoolTaskExecutor(final Environment environment) {
+    public ContextAwareThreadPoolTaskExecutor ContextAwareThreadPoolTaskExecutor(final Environment environment) {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
         threadPoolTaskExecutor.setCorePoolSize(20);
         threadPoolTaskExecutor.setMaxPoolSize(100);
         threadPoolTaskExecutor.setQueueCapacity(0);
         threadPoolTaskExecutor.setThreadNamePrefix("sqsThread-");
 //        threadPoolTaskExecutor.initialize(); // 변경
-        return new TenantAwareThreadPoolTaskExecutor(threadPoolTaskExecutor, environment);
+        return new ContextAwareThreadPoolTaskExecutor(threadPoolTaskExecutor, environment);
     }
 }
