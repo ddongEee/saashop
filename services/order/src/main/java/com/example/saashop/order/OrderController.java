@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Locale;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,6 +18,11 @@ public class OrderController {
 
     public OrderController(final OrderService orderService) {
         this.orderService = orderService;
+    }
+
+    @GetMapping("/order/all")
+    public List<String> listOrders() {
+        return orderService.getAll();
     }
 
     @GetMapping("/order/{orderId}/detail")
@@ -47,11 +52,15 @@ public class OrderController {
             ddbClient.putItemInTable(orderId, "ORDERED");
             final String message = "done to order";
             producer.produce(MessageProducer.TestMessage.createMessage(orderId, message));
-            return "done";
+            return "[Ordered] orderId : " + orderId;
         }
 
         public OrderDetailDto getByOrderId(final String orderId) {
             return ddbClient.getOrder(orderId);
+        }
+
+        public List<String> getAll() {
+            return ddbClient.getAll();
         }
     }
 

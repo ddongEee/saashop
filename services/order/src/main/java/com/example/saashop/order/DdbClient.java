@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class DdbClient {
@@ -53,5 +54,13 @@ public class DdbClient {
             log.error("Error: The Amazon DynamoDB table \"{}\" can't be found.\n", tableName);
             log.error("Be sure that it exists and that you've typed its name correctly!");
         }
+    }
+
+    public List<String> getAll() {
+        ScanRequest request = new ScanRequest(this.tableName);
+        ScanResult result = ddb.scan(request);
+        return result.getItems().stream()
+                .map(i -> i.get("orderId").getS())
+                .collect(Collectors.toList());
     }
 }
