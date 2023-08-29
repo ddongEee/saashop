@@ -26,6 +26,7 @@ export class SourceStack extends cdk.Stack {
       id,
       orderService.orderedQueue,
       commonInfra.ddbTable,
+      { region: commonInfra.regionSsm, sqsUrl: commonInfra.sqsUrlSsm },
       mainLogDestinationArn
     );
 

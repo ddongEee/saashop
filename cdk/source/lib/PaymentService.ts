@@ -5,11 +5,26 @@ import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { generateLogGroup, setParameterStore } from './common/utils';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+
+interface ssmList {
+  region: StringParameter;
+  sqsUrl: StringParameter;
+  ddbTable: StringParameter;
+}
 
 export class PaymentService {
   public readonly paymentQueue;
+  public readonly paiedSqsSsm;
 
-  constructor(scope: Construct, id: string, orderedQueue: Queue, ddbTable: Table, logDestinationArn: string) {
+  constructor(
+    scope: Construct,
+    id: string,
+    orderedQueue: Queue,
+    ddbTable: Table,
+    ssmList: ssmList,
+    logDestinationArn: string
+  ) {
     const paymentQueueName = 'techsummit-paid-queue';
 
     this.paymentQueue = new Queue(scope, id + 'PaymentQueue', {
@@ -17,7 +32,12 @@ export class PaymentService {
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
-    setParameterStore(scope, id + 'PaidSqsParameterStore', '/summit/app/cloud.aws.queue.paid-name', paymentQueueName);
+    this.paiedSqsSsm = setParameterStore(
+      scope,
+      id + 'PaidSqsParameterStore',
+      '/summit/app/cloud.aws.queue.paid-name',
+      paymentQueueName
+    );
 
     const paymentLambda = new Function(scope, id + 'PaymentService', {
       runtime: Runtime.NODEJS_18_X,
@@ -31,6 +51,10 @@ export class PaymentService {
     this.paymentQueue.grantSendMessages(paymentLambda);
     orderedQueue.grantConsumeMessages(paymentLambda);
     ddbTable.grantReadWriteData(paymentLambda);
+    ssmList.region.grantRead(paymentLambda);
+    ssmList.sqsUrl.grantRead(paymentLambda);
+    ssmList.ddbTable.grantRead(paymentLambda);
+    this.paiedSqsSsm.grantRead(paymentLambda);
 
     paymentLambda.addEventSource(new SqsEventSource(orderedQueue));
   }
