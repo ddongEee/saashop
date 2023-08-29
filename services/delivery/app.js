@@ -1,17 +1,18 @@
-import { logger, ContextAwareSqsConsumer, ContextAwareSqsProducer, contextMiddleware } from '@hdall/express';
+// import { logger, ContextAwareSqsConsumer, ContextAwareSqsProducer, contextMiddleware } from '@hdall/express';
 import { v4 as uuidv4 } from 'uuid';
 import { DynamoDBClient, UpdateItemCommand, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm';
 import { consts } from './src/const/consts.js';
 import express from 'express';
 import cors from 'cors';
+import { Consumer } from 'sqs-consumer';
 
 const app = express();
 app.use(cors());
-app.use(contextMiddleware);
+// app.use(contextMiddleware);
 
 app.get('/delivery', (req, res) => {
-  // res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', '*');
   res.send("DELIVERY RESPONSE");
 });
 
@@ -66,12 +67,12 @@ const customHandleMessage = async (m) => {
   try {
     console.log(`\n=========== ${fromSqsUrl} CONSUMER customHandleMessage =====================>`);
 
-    logger.info('MESSAGE > ', m);
+    console.log('MESSAGE > ', m);
 
     const attributes = m.Attributes;
     const orderId = 'a50a1a1d-e1b2-4b12-8223-68357703cee4'; //attributes.orderId ?? uuidv4();
     // const orderId = attributes.orderId ?? uuidv4();
-    logger.info('orderId > ', orderId);
+    console.log('orderId > ', orderId);
 
     // const ddbGetInput = {
     //   TableName: ddbTableName,
@@ -114,9 +115,9 @@ const customHandleMessage = async (m) => {
       };
 
       const response4 = await ddbClient.send(new UpdateItemCommand(ddbInput));
-      logger.log('@ UpdateItemCommand result >> ', response4);
+      console.log('@ UpdateItemCommand result >> ', response4);
     } else {
-      logger.log('@ NO ORDER ID >> ', m);
+      console.log('@ NO ORDER ID >> ', m);
       // ddbInput = {
       //   TableName: ddbTableName,
       //   Item: {
@@ -135,11 +136,12 @@ const customHandleMessage = async (m) => {
       
     }
   } catch (e) {
-    logger.error(e, e.stack);
+    // logger.error(e, e.stack);
+    console.error(e, e.stack);
   }
 };
 
-const sqsConsumer = ContextAwareSqsConsumer.create({
+const sqsConsumer = /*ContextAwareSqsConsumer*/Consumer.create({
   messageAttributeNames: ['All'],
   queueUrl: fromSqsUrl,
   batchSize: 10,
@@ -151,5 +153,5 @@ sqsConsumer.on('error', (err) => {
   logger.error(`error`, err);
 });
 
-logger.info(`[init][SQS] polling with ${fromSqsUrl}`);
+console.log(`[init][SQS] polling with ${fromSqsUrl}`);
 sqsConsumer.start();
