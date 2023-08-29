@@ -8,7 +8,7 @@ import { Construct } from 'constructs';
 import { SecGroup } from './sg';
 import { AnyPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Nginx } from './nginx';
-import { Tags } from 'aws-cdk-lib';
+import { CfnOutput, Tags } from 'aws-cdk-lib';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { setParameterStore } from '../common/utils';
@@ -106,6 +106,9 @@ export class OpenSearchStack extends cdk.Stack {
       buckets.firehoseBackupBucket.bucketArn
     );
     setParameterStore(this, id + '-set-4', `/Firehose/${targetRegion}/RoleArn`, buckets.firehoseRole.roleArn);
+    new CfnOutput(this, id + 'osEndpoint', {
+      value: this.osDomainEndpoint,
+    });
   }
 
   // OpenSearch inside vpc
