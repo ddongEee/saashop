@@ -98,5 +98,7 @@ export class OrderService {
       loadBalancerName: id + 'alb',
       listenerPort: 80,
     });
+
+    orderService.targetGroup.configureHealthCheck({ path: '/health' });
   }
 }
