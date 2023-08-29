@@ -1,8 +1,27 @@
-import { logger, ContextAwareSqsConsumer, ContextAwareSqsProducer } from '@hdall/express';
+import { logger, ContextAwareSqsConsumer, ContextAwareSqsProducer, contextMiddleware } from '@hdall/express';
 import { v4 as uuidv4 } from 'uuid';
 import { DynamoDBClient, UpdateItemCommand, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm';
 import { consts } from './src/const/consts.js';
+import express from 'express';
+import cors from 'cors';
+
+const app = express();
+app.use(cors());
+app.use(contextMiddleware);
+
+app.get('/delivery', (req, res) => {
+  // res.header('Access-Control-Allow-Origin', '*');
+  res.send("DELIVERY RESPONSE");
+});
+
+app.use(function(req, res, next) {
+  res.status(404).send('not found');
+});
+
+app.listen(80, () => {
+  console.log('Server is running on port 80');
+});
 
 const ssmClient = new SSMClient();
 const ddbClient = new DynamoDBClient();
@@ -46,24 +65,25 @@ const getCurrentFormattedDate = () => {
 const customHandleMessage = async (m) => {
   try {
     console.log(`\n=========== ${fromSqsUrl} CONSUMER customHandleMessage =====================>`);
-    // console.info('Hello from jihyeRay1 listener > ', m);
+
+    logger.info('MESSAGE > ', m);
 
     const attributes = m.Attributes;
     const orderId = 'a50a1a1d-e1b2-4b12-8223-68357703cee4'; //attributes.orderId ?? uuidv4();
     // const orderId = attributes.orderId ?? uuidv4();
     logger.info('orderId > ', orderId);
 
-    const ddbGetInput = {
-      TableName: ddbTableName,
-      Key: {
-        orderId: {
-          S: orderId,
-        },
-      },
-    };
+    // const ddbGetInput = {
+    //   TableName: ddbTableName,
+    //   Key: {
+    //     orderId: {
+    //       S: orderId,
+    //     },
+    //   },
+    // };
 
-    const existedOrder = await ddbClient.send(new GetItemCommand(ddbGetInput));
-    console.log('@ existedOrder > ', existedOrder.Item);
+    // const existedOrder = await ddbClient.send(new GetItemCommand(ddbGetInput));
+    // console.log('@ existedOrder > ', existedOrder.Item);
 
     let ddbInput;
     const current = getCurrentFormattedDate();
@@ -74,12 +94,6 @@ const customHandleMessage = async (m) => {
           orderId: {
             S: orderId,
           },
-          // "event": {
-          //   "L": beforeEvent.push({ "M": { "DELIVERED" : {"S": getCurrentFormattedDate()}}})
-          // },
-          // "lastUpdatedAt": {
-          //   "S": getCurrentFormattedDate()
-          // }
         },
         UpdateExpression: 'SET event = list_append(event, :deliveredEvent), lastUpdatedAt = :currentTime',
         ExpressionAttributeValues: {
@@ -95,46 +109,31 @@ const customHandleMessage = async (m) => {
         //     Value: [{"DELIVERED" : current}],
         //     Action: "PUT"
         //   },
-        //   lastUpdatedAt: {
-        //     Value: current,
-        //     Action: "PUT"
-        //   }
         // },
         ReturnValues: 'ALL_NEW',
       };
 
       const response4 = await ddbClient.send(new UpdateItemCommand(ddbInput));
-      console.log('@ UpdateItemCommand result >> ', response4);
+      logger.log('@ UpdateItemCommand result >> ', response4);
     } else {
-      ddbInput = {
-        TableName: ddbTableName,
-        Item: {
-          orderId: {
-            S: orderId,
-          },
-          lastUpdatedAt: {
-            S: current,
-          },
-          event: {
-            L: [{ M: { DEIVERED: { S: current } } }],
-          },
-        },
-      };
-      const response5 = await ddbClient.send(new PutItemCommand(ddbInput));
-      console.log('@ PutItemCommand >> ', response5);
+      logger.log('@ NO ORDER ID >> ', m);
+      // ddbInput = {
+      //   TableName: ddbTableName,
+      //   Item: {
+      //     orderId: {
+      //       S: orderId,
+      //     },
+      //     lastUpdatedAt: {
+      //       S: current,
+      //     },
+      //     event: {
+      //       L: [{ M: { DEIVERED: { S: current } } }],
+      //     },
+      //   },
+      // };
+      // const response5 = await ddbClient.send(new PutItemCommand(ddbInput));
+      
     }
-
-    // const data = {
-    //   orderId: orderId,
-    // };
-
-    // const params = {
-    //   MessageBody: JSON.stringify(data),
-    //   QueueUrl: nextSqsUrl,
-    // };
-
-    // const response = await producer.tenantAwareSendMessage(params);
-    // console.info(`================== SEND COMPLETED message to ${nextSqsUrl}>>>`, response)
   } catch (e) {
     logger.error(e, e.stack);
   }
