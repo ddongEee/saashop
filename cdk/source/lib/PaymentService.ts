@@ -21,11 +21,8 @@ export class PaymentService {
 
     const paymentLambda = new Function(scope, id + 'PaymentService', {
       runtime: Runtime.NODEJS_18_X,
-      handler: 'payment.handler',
+      handler: 'index.handler',
       code: Code.fromAsset('lambda'),
-      environment: {
-        queueUrl: this.paymentQueue.queueUrl,
-      },
       tracing: Tracing.ACTIVE,
     });
 
