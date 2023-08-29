@@ -100,11 +100,5 @@ export class OrderService {
     });
 
     orderService.targetGroup.configureHealthCheck({ path: '/actuator/health' });
-
-    new CfnOutput(scope, id + '-export-alb-dns', {
-      value: orderService.loadBalancer.loadBalancerDnsName,
-      description: 'Sample Application Endpoint',
-      exportName: 'alb-dns-endpoint',
-    });
   }
 }

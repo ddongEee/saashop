@@ -11,6 +11,9 @@ export class CommonInfra {
   public readonly vpc;
   public readonly ecsTaskRole;
   public readonly ddbTable;
+  public readonly ddbSsm;
+  public readonly regionSsm;
+  public readonly sqsUrlSsm;
 
   constructor(scope: Construct, id: string) {
     const region = Stack.of(scope).region;
@@ -36,15 +39,25 @@ export class CommonInfra {
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
-    setParameterStore(scope, id + 'DdbParameterStore', '/summit/app/cloud.aws.ddb.table-name', 'techsummit-shop-ddb');
+    this.ddbSsm = setParameterStore(
+      scope,
+      id + 'DdbParameterStore',
+      '/summit/app/cloud.aws.ddb.table-name',
+      'techsummit-shop-ddb'
+    );
     setParameterStore(scope, id + 'SqsParameterStore', '/summit/app/cloud.aws.queue.name', 'techsummit-test-queue');
 
-    setParameterStore(
+    this.sqsUrlSsm = setParameterStore(
       scope,
       id + 'SqsUrls',
       '/summit/app/cloud.aws.queue.uri',
       `https://sqs.${region}.amazonaws.com/${accountId}`
     );
-    setParameterStore(scope, id + 'RegionParameterStore', '/summit/app/cloud.aws.region.static', region);
+    this.regionSsm = setParameterStore(
+      scope,
+      id + 'RegionParameterStore',
+      '/summit/app/cloud.aws.region.static',
+      region
+    );
   }
 }
