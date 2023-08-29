@@ -21,17 +21,14 @@ export const handler = async (event, context) => {
     console.warn('Hello from Lambda');
 
     // Update DDB
+    const orderId = JSON.parse(event.Records[0].body).orderId;
     const currentDate = new Date().toISOString();
     const ddbParams = {
       TableName: DDB_TABLE_NAME,
       Key: {
-        orderId: event.orderId,
+        orderId,
       },
       UpdateExpression: 'SET event = list_append(event, :paidEvent), lastUpdatedAt = :currentTime',
-      // ExpressionAttributeNames: {
-      //    '#event': 'event',
-      //    '#lastUpdatedAt': 'lastUpdatedAt'
-      // },
       ExpressionAttributeValues: {
         ':paidEvent': [{ PAID: currentDate }],
         ':currentTime': currentDate,
@@ -42,12 +39,10 @@ export const handler = async (event, context) => {
     console.log('ddb result: ', ddbResult);
 
     // Send Message
+    const messageBody = { orderId };
     const sqsParams = {
       QueueUrl: QUEUE_URL,
-      MessageAttributes: {
-        key: 'value',
-      },
-      MessageBody: 'hello',
+      MessageBody: JSON.stringify(messageBody),
     };
     const sqsResult = await sendMessage(sqsParams);
     console.log('sqs result: ', sqsResult);
