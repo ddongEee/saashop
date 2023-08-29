@@ -1,8 +1,6 @@
-organizations[0].organizationId   = tenantContext.organizationId
-organizations[0].businessType     = tenantContext.businessType
-organizations[0].organizationName = tenantContext.organizationName
-organizations[0].industry         = tenantContext.industry
-organizations[0].country          = tenantContext.country
-user.userId                       = userContext.userId
-traceId                           = traceId
-requestId                         = requestId
+tenant.tenantId   =  tenantContext.tenantId
+tenant.tenantName =  tenantContext.tenantName
+tenant.plan       =  tenantContext.plan
+account.userId    =  userContext.userId
+account.gender    =  userContext.gender
+account.role      =  userContext.role
