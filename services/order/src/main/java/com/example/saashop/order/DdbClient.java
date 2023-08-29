@@ -9,9 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 @Component
 public class DdbClient {
@@ -25,21 +23,16 @@ public class DdbClient {
         this.tableName = tableName;
     }
 
-    public void putItemInTableV2(final String orderId, final String message){
-        HashMap<String,AttributeValue> itemValues = new HashMap<>();
-        itemValues.put("orderId", new AttributeValue().withS(orderId));
-        itemValues.put("message", new AttributeValue().withS(message));
-        itemValues.put("datetime", new AttributeValue().withS(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)));
-
-        PutItemRequest request = new PutItemRequest(this.tableName, itemValues);
-
-        try {
-            PutItemResult putItemResult = ddb.putItem(request);
-            log.info(tableName +" was successfully updated. The request id is "+putItemResult.getSdkResponseMetadata().getRequestId());
-        } catch (Exception e) {
-            log.error("Error: The Amazon DynamoDB table \"{}\" can't be found.\n", tableName);
-            log.error("Be sure that it exists and that you've typed its name correctly!");
-        }
+    public OrderController.OrderDetailDto getOrder(final String orderId) {
+        HashMap<String,AttributeValue> key = new HashMap<>();
+        key.put("orderId", new AttributeValue().withS(orderId));
+        GetItemRequest getItemRequest = new GetItemRequest(this.tableName, key);
+        GetItemResult item = ddb.getItem(getItemRequest);
+        Map<String, AttributeValue> itemMap = item.getItem();
+        String savedOrderId = itemMap.get("orderId").getS();
+        AttributeValue attributeValue = itemMap.get("event").getL().get(0).getM().get("ORDERED");
+        String createdAt = attributeValue.getS();
+        return new OrderController.OrderDetailDto(savedOrderId, "ORDERED", createdAt);
     }
 
     public void putItemInTable(final String orderId, final String state){
@@ -59,42 +52,6 @@ public class DdbClient {
         } catch (Exception e) {
             log.error("Error: The Amazon DynamoDB table \"{}\" can't be found.\n", tableName);
             log.error("Be sure that it exists and that you've typed its name correctly!");
-        }
-    }
-
-    private void listTables() {
-        ListTablesResult listTablesResult = ddb.listTables();
-        log.info("## list ddbTables : {}", listTablesResult.getTableNames());
-    }
-
-    private void createTable() {
-        AttributeDefinition keyAttrDefinition = new AttributeDefinition("orderId", "S");
-//        AttributeDefinition msgAttrDefinition = new AttributeDefinition("message", "S");
-
-        CreateTableRequest createTableRequest = new CreateTableRequest().withTableName("aaa-bbb")
-                .withKeySchema(new KeySchemaElement("orderId", "HASH"))
-                .withAttributeDefinitions(keyAttrDefinition)
-                .withBillingMode(BillingMode.PAY_PER_REQUEST);
-        CreateTableResult createTableResult = ddb.createTable(createTableRequest);
-        log.info("CreateTableResult : {}", createTableResult.getTableDescription());
-    }
-
-    public void getItemInTable(){
-        HashMap<String, AttributeValue> key = new HashMap<>();
-        key.put("Artist", new AttributeValue().withS("No One You Know"));
-        key.put("SongTitle", new AttributeValue().withS("Scared of My Shadow"));
-
-        GetItemRequest request = new GetItemRequest()
-                .withTableName(this.tableName).withKey(key);
-
-        try {
-            System.out.println("Attempting to read the item...");
-            GetItemResult result = ddb.getItem(request);
-            System.out.println("GetItem succeeded: " + result);
-
-        } catch (Exception e) {
-            System.err.println("Unable to read item");
-            System.err.println(e.getMessage());
         }
     }
 }
