@@ -13,7 +13,7 @@ const mockEvent = {
             "ApproximateReceiveCount": "1",
             "AWSTraceHeader": "Root=1-649ed9ed-70a9ee2758e38d3d705268e4;Parent=cc491f946f406af4;Sampled=0",
             "SentTimestamp": "1688132077589",
-            "SenderId": "AROAYNCSDB2RLL3QNRFJP:5k-saas-lambda-demo",
+            "SenderId": "AROAYNCSDB2RLL3QNRFJP:saas-lambda-demo",
             "ApproximateFirstReceiveTimestamp": "1688132077591",
           },
           "messageAttributes": {
