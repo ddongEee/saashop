@@ -213,10 +213,13 @@ HELP.md
 
 coverage
 docs
-bin/
+# bin/
 
 ### VS Code ###
 .vscode/
 
 # 라이브러리파일 포함
 !spring-plain.jar
+
+# 샘플 jar 파일 포함
+!*SNAPSHOT.jar

@@ -4,6 +4,7 @@ import { getConfig } from './common/utils';
 import { CommonInfra } from './CommonInfra';
 import { OrderService } from './OrderService';
 import { PaymentService } from './PaymentService';
+import { DeliveryService } from './DeliveryService';
 
 export class SourceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: cdk.StackProps, profile: string) {
@@ -25,6 +26,15 @@ export class SourceStack extends cdk.Stack {
       id,
       orderService.orderedQueue,
       commonInfra.ddbTable,
+      { region: commonInfra.regionSsm, sqsUrl: commonInfra.sqsUrlSsm, ddbTable: commonInfra.ddbSsm },
+      mainLogDestinationArn
+    );
+
+    const deliveryService = new DeliveryService(
+      this,
+      id,
+      commonInfra.ecsCluster,
+      commonInfra.ecsTaskRole,
       mainLogDestinationArn
     );
   }

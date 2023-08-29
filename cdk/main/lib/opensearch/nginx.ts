@@ -21,7 +21,7 @@ export class Nginx {
     osSecurityGroup: SecurityGroup,
     proxyInstanceType: string,
     proxyInstanceNumber: number,
-    elbDomain?: string // The custom domain name of the ELB. e.g. opensearch.samsungvxt.com
+    elbDomain?: string // The custom domain name of the ELB.
   ) {
     ///import env configs
 

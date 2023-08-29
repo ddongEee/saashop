@@ -15,10 +15,12 @@ export const handler = async (event, context) => {
 
   try {
     // TODO: Replace all existing console.log() statements in the Lambda function to appropriate log levels like logger.info(), logger.error(), etc.
-    console.log('Hello from Lambda');
+    console.log('Event from OrderService is', JSON.parse(event.Records[0].body));
     console.debug('Hello from Lambda');
     console.error('Hello from Lambda');
     console.warn('Hello from Lambda');
+
+    const orderId = JSON.parse(event.Records[0].body).orderId;
 
     // Update DDB
     const orderId = JSON.parse(event.Records[0].body).orderId;
@@ -37,6 +39,8 @@ export const handler = async (event, context) => {
     };
     const ddbResult = await updateOrderStatus(ddbParams);
     console.log('ddb result: ', ddbResult);
+
+    const messageBody = { orderId };
 
     // Send Message
     const messageBody = { orderId };

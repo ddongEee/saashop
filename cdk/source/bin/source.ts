@@ -1,15 +1,18 @@
-#!/usr/bin/env node
-import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { SourceStack } from '../lib/SourceStack';
 
 const app = new cdk.App();
 const profile = 'src';
+const srcAccountId = app.node.tryGetContext('srcAccountId');
+const srcRegion = app.node.tryGetContext('srcRegion');
+
+const srcProfile = { account: srcAccountId, region: srcRegion };
+
 new SourceStack(
   app,
   'SourceStack',
   {
-    env: { account: '496772517886', region: 'ap-southeast-1' },
+    env: srcProfile,
   },
   profile
 );
