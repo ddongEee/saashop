@@ -17,6 +17,7 @@ import {
 } from 'aws-cdk-lib/aws-ecs';
 import { Role } from 'aws-cdk-lib/aws-iam';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
+import { HealthCheck } from 'aws-cdk-lib/aws-appmesh';
 
 export class OrderService {
   public readonly orderedQueue;
@@ -96,5 +97,7 @@ export class OrderService {
       loadBalancerName: id + 'alb',
       listenerPort: 80,
     });
+
+    orderService.targetGroup.configureHealthCheck({ path: '/health' });
   }
 }
