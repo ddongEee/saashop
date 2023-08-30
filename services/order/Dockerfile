@@ -3,7 +3,7 @@ WORKDIR /application
 ARG JAR_FILE=build/libs/*-SNAPSHOT.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
-RUN yum install -y unzip
+RUN apt install -y unzip
 
 FROM --platform=linux/amd64 openjdk:21-ea-17-buster
 WORKDIR /application
