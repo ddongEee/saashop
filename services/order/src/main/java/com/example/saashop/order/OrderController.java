@@ -52,7 +52,7 @@ public class OrderController {
             ddbClient.putItemInTable(orderId, "ORDERED");
             final String message = "done to order";
             producer.produce(MessageProducer.TestMessage.createMessage(orderId, message));
-            return "[Ordered] orderId : " + orderId;
+            return orderId;
         }
 
         public OrderDetailDto getByOrderId(final String orderId) {
