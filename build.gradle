@@ -24,6 +24,14 @@ subprojects {
 
 	repositories {
 		mavenCentral()
+		maven {
+			allowInsecureProtocol true
+			credentials {
+				username = 'workshop'
+				password = '123'
+			}
+			url 'http://3.112.178.109/repository/maven2-hosted/'
+		}
 	}
 
 	dependencies {
