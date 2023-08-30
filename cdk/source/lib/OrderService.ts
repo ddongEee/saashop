@@ -55,6 +55,8 @@ export class OrderService {
 
     const orderTaskDefinition = new FargateTaskDefinition(scope, id + 'OrderTaskDefinition', {
       taskRole: ecsTaskRole,
+      cpu: 4096,
+      memoryLimitMiB: 8192,
     });
 
     const appContainer = new ContainerDefinition(scope, id + 'OrderAppContainer', {
@@ -88,9 +90,7 @@ export class OrderService {
 
     const orderService = new ApplicationLoadBalancedFargateService(scope, id + 'OrderService', {
       cluster: ecsCluster,
-      memoryLimitMiB: 1024,
       desiredCount: 1,
-      cpu: 512,
       taskDefinition: orderTaskDefinition,
       taskSubnets: {
         subnets: vpc.privateSubnets,
