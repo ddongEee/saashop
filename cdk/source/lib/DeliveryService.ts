@@ -34,6 +34,8 @@ export class DeliveryService {
 
     const deliveryTaskDefinition = new FargateTaskDefinition(scope, id + 'DeliveryTaskDefinition', {
       taskRole: ecsTaskRole,
+      cpu: 4096,
+      memoryLimitMiB: 8192,
     });
 
     const appContainer = new ContainerDefinition(scope, id + 'DeliveryAppContainer', {

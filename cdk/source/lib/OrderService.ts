@@ -88,9 +88,9 @@ export class OrderService {
 
     const orderService = new ApplicationLoadBalancedFargateService(scope, id + 'OrderService', {
       cluster: ecsCluster,
-      memoryLimitMiB: 1024,
+      memoryLimitMiB: 8192,
       desiredCount: 1,
-      cpu: 512,
+      cpu: 4096,
       taskDefinition: orderTaskDefinition,
       taskSubnets: {
         subnets: vpc.privateSubnets,
