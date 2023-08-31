@@ -1,31 +1,15 @@
-// import { logger, ContextAwareSqsConsumer, ContextAwareSqsProducer, contextMiddleware } from '@hdall/express';
+import { logger, ContextAwareSqsConsumer, tracer, ContextAwareSqsProducer, contextMiddleware, openSegment, closeSegment } from '@hdall/express';
 import { v4 as uuidv4 } from 'uuid';
 import { DynamoDBClient, UpdateItemCommand, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm';
 import { consts } from './src/const/consts.js';
-import express from 'express';
-import cors from 'cors';
 import { Consumer } from 'sqs-consumer';
 
-const app = express();
-app.use(cors());
-// app.use(contextMiddleware);
-
-app.get('/delivery', (req, res) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.send("DELIVERY RESPONSE");
-});
-
-app.use(function(req, res, next) {
-  res.status(404).send('not found');
-});
-
-app.listen(80, () => {
-  console.log('Server is running on port 80');
-});
 
 const ssmClient = new SSMClient();
+tracer.captureAWSv3Client(ssmClient);
 const ddbClient = new DynamoDBClient();
+tracer.captureAWSv3Client(ddbClient);
 // const producer = new ContextAwareSqsProducer();
 
 const getConsumeSqsUriInput = {
@@ -65,14 +49,15 @@ const getCurrentFormattedDate = () => {
 
 const customHandleMessage = async (m) => {
   try {
-    console.log(`\n=========== ${fromSqsUrl} CONSUMER customHandleMessage =====================>`);
-
-    console.log('MESSAGE > ', m);
+    // console.log(`\n=========== ${fromSqsUrl} CONSUMER customHandleMessage =====================>`);
+    logger.info(`\n=========== ${fromSqsUrl} CONSUMER customHandleMessage =====================>`);
+    // console.log('MESSAGE > ', m);
+    logger.info('MESSAGE > ', m);
 
     const attributes = m.Attributes;
     const orderId = 'a50a1a1d-e1b2-4b12-8223-68357703cee4'; //attributes.orderId ?? uuidv4();
     // const orderId = attributes.orderId ?? uuidv4();
-    console.log('orderId > ', orderId);
+    logger.info('orderId > ', orderId);
 
     // const ddbGetInput = {
     //   TableName: ddbTableName,
@@ -83,8 +68,8 @@ const customHandleMessage = async (m) => {
     //   },
     // };
 
-    // const existedOrder = await ddbClient.send(new GetItemCommand(ddbGetInput));
-    // console.log('@ existedOrder > ', existedOrder.Item);
+    const existedOrder = await ddbClient.send(new GetItemCommand(ddbGetInput));
+    // logger.info('@ existedOrder > ', existedOrder.Item);
 
     let ddbInput;
     const current = getCurrentFormattedDate();
@@ -115,33 +100,17 @@ const customHandleMessage = async (m) => {
       };
 
       const response4 = await ddbClient.send(new UpdateItemCommand(ddbInput));
-      console.log('@ UpdateItemCommand result >> ', response4);
+      logger.info('@ UpdateItemCommand result >> ', response4);
     } else {
-      console.log('@ NO ORDER ID >> ', m);
-      // ddbInput = {
-      //   TableName: ddbTableName,
-      //   Item: {
-      //     orderId: {
-      //       S: orderId,
-      //     },
-      //     lastUpdatedAt: {
-      //       S: current,
-      //     },
-      //     event: {
-      //       L: [{ M: { DEIVERED: { S: current } } }],
-      //     },
-      //   },
-      // };
-      // const response5 = await ddbClient.send(new PutItemCommand(ddbInput));
-      
+      logger.info('@ NO ORDER ID >> ', m);
     }
   } catch (e) {
     // logger.error(e, e.stack);
-    console.error(e, e.stack);
+    logger.error(e, e.stack);
   }
 };
 
-const sqsConsumer = /*ContextAwareSqsConsumer*/Consumer.create({
+const sqsConsumer = /*Consumer*/ContextAwareSqsConsumer.create({
   messageAttributeNames: ['All'],
   queueUrl: fromSqsUrl,
   batchSize: 10,
@@ -153,5 +122,5 @@ sqsConsumer.on('error', (err) => {
   logger.error(`error`, err);
 });
 
-console.log(`[init][SQS] polling with ${fromSqsUrl}`);
+logger.info(`[init][SQS] polling with ${fromSqsUrl}`);
 sqsConsumer.start();
