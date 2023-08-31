@@ -1,22 +1,20 @@
 {
-    "name": "saashop-payment-service",
-    "main": "app.js",
-    "type": "module",
-    "dependencies": {
-      "@aws-sdk/client-dynamodb": "^3.398.0",
-      "@aws-sdk/client-sqs": "^3.398.0",
-      "@aws-sdk/client-ssm": "^3.398.0",
-      "@aws-sdk/lib-dynamodb": "^3.398.0",
-      "@hdall/lambda": "file:../../../heimdall/heimdall/lambda/hdall-lambda-v0.0.1.tgz",
-      "aws-xray-sdk": "^3.5.1"
-    },
-    "devDependencies": {
-      "concurrently": "^8.2.0",
-      "nodemon": "^2.0.22"
-    },
-    "scripts": {
-        "start": "node index.mjs",
-        "local": "node local/index_local.mjs",
-        "build:layer": "npm install --omit=dev && sh ./scripts/build.layer.local.sh"
-    }
+  "name": "saashop-payment-service",
+  "main": "app.js",
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.398.0",
+    "@aws-sdk/client-sqs": "^3.398.0",
+    "@aws-sdk/client-ssm": "^3.398.0",
+    "@aws-sdk/lib-dynamodb": "^3.398.0",
+    "aws-xray-sdk": "^3.5.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "scripts": {
+    "start": "node index.mjs",
+    "local": "node local/index_local.mjs",
+    "build:layer": "npm install --omit=dev && sh ./scripts/build.layer.local.sh"
+  }
 }
