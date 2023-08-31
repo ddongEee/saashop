@@ -17,6 +17,7 @@ import {
 } from 'aws-cdk-lib/aws-ecs';
 import { Role } from 'aws-cdk-lib/aws-iam';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
+import { CodePipeline } from 'aws-cdk-lib/pipelines';
 
 export class OrderService {
   public readonly orderedQueue;
