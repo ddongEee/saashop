@@ -4,7 +4,7 @@
 echo "======== build layer: [Heimdall] start ========"
 # NODE_VERSION=node18
 # export AWS_PROFILE=<your-aws-profile>
-# AWS_REGION=<your-aws-region>
+AWS_REGION=us-east-2 # relace herer to <your-aws-region>
 
 rm -rf ./layers/heimdall/nodejs
 mkdir -p ./layers/nodejs/
