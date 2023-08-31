@@ -66,7 +66,7 @@ export class OrderService {
         logGroup: orderServiceLogGroup,
         streamPrefix: 'orderService',
       }),
-      environment: { SOURCE_REGION: stackRegion },
+      environment: { SOURCE_REGION: stackRegion, AWS_XRAY_DAEMON_ADDRESS: 'xray-daemon:2000' },
     });
 
     appContainer.addPortMappings({
