@@ -75,12 +75,15 @@ export class OrderService {
     });
 
     const xrayContainer = new ContainerDefinition(scope, id + 'XrayContainer', {
+      containerName: 'xray-daemon',
       image: ContainerImage.fromRegistry('amazon/aws-xray-daemon'),
       taskDefinition: orderTaskDefinition,
       logging: LogDriver.awsLogs({
         logGroup: orderServiceLogGroup,
         streamPrefix: 'xray',
       }),
+      cpu: 31,
+      memoryLimitMiB: 256,
     });
     xrayContainer.addPortMappings({
       protocol: Protocol.UDP,
