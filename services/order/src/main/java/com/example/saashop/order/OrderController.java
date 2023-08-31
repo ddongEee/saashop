@@ -17,11 +17,6 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @GetMapping("/cors")
-    public String testCors() {
-        return "done";
-    }
-
     @GetMapping("/order/all")
     public List<String> listOrders() {
         return orderService.getAll();
