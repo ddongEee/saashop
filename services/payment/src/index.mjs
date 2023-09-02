@@ -13,10 +13,10 @@ const lambdaHandler = async (event, context) => {
   }
 
   try {
-    logger.info('Event from OrderService is', JSON.parse(event.Records[0].body));
-    logger.debug('Hello from Lambda');
-    logger.error('Hello from Lambda');
-    logger.warn('Hello from Lambda');
+    logger.info('[PaymentService] Message from OrderService:', JSON.parse(event.Records[0].body));
+    logger.debug('[PaymentService] Hello from Lambda');
+    logger.error('[PaymentService] Hello from Lambda');
+    logger.warn('[PaymentService] Hello from Lambda');
 
     // Update DDB
     const orderId = JSON.parse(event.Records[0].body).orderId;
@@ -27,10 +27,6 @@ const lambdaHandler = async (event, context) => {
         orderId,
       },
       UpdateExpression: 'SET event = list_append(event, :paidEvent), lastUpdatedAt = :currentTime',
-      // ExpressionAttributeNames: {
-      //    '#event': 'event',
-      //    '#lastUpdatedAt': 'lastUpdatedAt'
-      // },
       ExpressionAttributeValues: {
         ':paidEvent': [{ PAID: currentDate }],
         ':currentTime': currentDate,
@@ -38,7 +34,7 @@ const lambdaHandler = async (event, context) => {
       ReturnValues: 'ALL_NEW',
     };
     const ddbResult = await updateOrderStatus(ddbParams);
-    console.log('ddb result: ', ddbResult);
+    logger.info('[PaymentService] Successfully update order status.');
 
     // Send Message
     const messageBody = { orderId };
@@ -47,12 +43,14 @@ const lambdaHandler = async (event, context) => {
       MessageBody: JSON.stringify(messageBody),
     };
     const sqsResult = await sendMessage(sqsParams, logger.getLogContext() ?? undefined);
-    console.log('sqs result: ', sqsResult);
+    logger.info('[PaymentService] Successfully send message to delivery service.');
   } catch (e) {
     const error = new Error(e);
     error.code = 500;
     throw error;
   }
+
+  logger.info('[PaymentService] Payment completed successfully.');
 
   return {
     statusCode: 200,

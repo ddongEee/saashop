@@ -15,10 +15,10 @@ export const handler = async (event, context) => {
 
   try {
     // TODO: Replace all existing console.log() statements in the Lambda function to appropriate log levels like logger.info(), logger.error(), etc.
-    console.log('Event from OrderService is', JSON.parse(event.Records[0].body));
-    console.debug('Hello from Lambda');
-    console.error('Hello from Lambda');
-    console.warn('Hello from Lambda');
+    console.log('[PaymentService] Message from OrderService:', JSON.parse(event.Records[0].body));
+    console.debug('[PaymentService] Hello from Lambda');
+    console.error('[PaymentService] Hello from Lambda');
+    console.warn('[PaymentService] Hello from Lambda');
 
     // Update DDB
     const orderId = JSON.parse(event.Records[0].body).orderId;
@@ -36,7 +36,7 @@ export const handler = async (event, context) => {
       ReturnValues: 'ALL_NEW',
     };
     const ddbResult = await updateOrderStatus(ddbParams);
-    console.log('ddb result: ', ddbResult);
+    console.log('[PaymentService] Successfully update order status.');
 
     // Send Message
     const messageBody = { orderId };
@@ -45,12 +45,14 @@ export const handler = async (event, context) => {
       MessageBody: JSON.stringify(messageBody),
     };
     const sqsResult = await sendMessage(sqsParams);
-    console.log('sqs result: ', sqsResult);
+    console.log('[PaymentService] Successfully send message to delivery service.');
   } catch (e) {
     const error = new Error(e);
     error.code = 500;
     throw error;
   }
+
+  console.log('[PaymentService] Payment completed successfully.');
 
   return {
     statusCode: 200,
