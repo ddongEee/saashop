@@ -1,5 +1,5 @@
 import { Construct } from 'constructs';
-import { Code, Function, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { Code, Function, LayerVersion, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { generateLogGroup, setParameterStore } from './common/utils';
@@ -39,11 +39,18 @@ export class PaymentService {
       paymentQueueName
     );
 
+    // const layer = new LayerVersion(scope, id + 'LambdaLayer', {
+    //   compatibleRuntimes: [Runtime.NODEJS_18_X, Runtime.NODEJS_16_X, Runtime.NODEJS_14_X],
+    //   code: Code.fromAsset('lambda/layer/nodejs.zip'),
+    //   layerVersionName: 'ts-workshop-heimdall',
+    // });
+
     const paymentLambda = new Function(scope, id + 'PaymentService', {
       runtime: Runtime.NODEJS_18_X,
       handler: 'index.handler',
-      code: Code.fromAsset('lambda'),
+      code: Code.fromAsset('lambda/code/'),
       tracing: Tracing.ACTIVE,
+      // layers: [layer],
     });
 
     generateLogGroup(scope, id, 'lambda', logDestinationArn, paymentLambda.functionName);
