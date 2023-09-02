@@ -1,12 +1,8 @@
 {
   "name": "saashop-payment-service",
-  "main": "app.js",
+  "main": "index.mjs",
   "type": "module",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.398.0",
-    "@aws-sdk/client-sqs": "^3.398.0",
-    "@aws-sdk/client-ssm": "^3.398.0",
-    "@aws-sdk/lib-dynamodb": "^3.398.0",
     "aws-xray-sdk": "^3.5.1"
   },
   "devDependencies": {
