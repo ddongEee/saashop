@@ -8,4 +8,5 @@ layers/
 extensions.zip
 
 # for local
+local/
 **.tgz
