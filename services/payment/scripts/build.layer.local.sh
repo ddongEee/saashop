@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # For local test
-echo "======== build layer: [Heimdall] start ========"
+echo "========  build layer with heimdall: start  ========"
 # NODE_VERSION=node18
 # export AWS_PROFILE=<your-aws-profile>
 AWS_REGION=us-east-2 # relace herer to <your-aws-region>
@@ -19,12 +19,12 @@ rm -rf node_modules.zip
 cd ../
 zip -r nodejs.zip ./nodejs
 
-echo "==== build layer: [Heimdall] publishing...  ====="
+echo "==== build layer with heimdall: publishing...  ====="
 aws lambda publish-layer-version \
     --region ${AWS_REGION} \
-    --layer-name "Heimdall" \
+    --layer-name "ts-workshop-heimdall" \
     --zip-file  "fileb://nodejs.zip"
 
-echo "========  build layer: [Heimdall] end  ========"
+echo "========  build layer with heimdall: end  =========="
 
 rm -rf nodejs.zip
