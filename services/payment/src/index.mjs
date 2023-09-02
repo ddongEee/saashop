@@ -14,9 +14,6 @@ const lambdaHandler = async (event, context) => {
 
   try {
     logger.info('[PaymentService] Message from OrderService:', JSON.parse(event.Records[0].body));
-    logger.debug('[PaymentService] Hello from Lambda');
-    logger.error('[PaymentService] Hello from Lambda');
-    logger.warn('[PaymentService] Hello from Lambda');
 
     // Update DDB
     const orderId = JSON.parse(event.Records[0].body).orderId;
