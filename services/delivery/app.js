@@ -1,16 +1,22 @@
-import { logger, ContextAwareSqsConsumer, tracer, ContextAwareSqsProducer, contextMiddleware, openSegment, closeSegment } from '@hdall/express';
+import { logger, ContextAwareSqsConsumer, tracer } from '@hdall/express';
 import { v4 as uuidv4 } from 'uuid';
-import { DynamoDBClient, UpdateItemCommand, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, UpdateItemCommand, GetItemCommand } from '@aws-sdk/client-dynamodb';
 import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm';
 import { consts } from './src/const/consts.js';
 import { Consumer } from 'sqs-consumer';
+import AWSXRay from 'aws-xray-sdk';
+import AWS from 'aws-sdk'
+const region = process.env.AWS_REGION || 'us-east-2';
 
+const aws = AWSXRay.captureAWS(AWS);
+const ssm = new aws.SSM({region: region});
+// const ssm = new AWS.SSM({region: region});
 
-const ssmClient = new SSMClient();
-tracer.captureAWSv3Client(ssmClient);
-const ddbClient = new DynamoDBClient();
-tracer.captureAWSv3Client(ddbClient);
-// const producer = new ContextAwareSqsProducer();
+const ssmClient = AWSXRay.captureAWSv3Client(new SSMClient({region: region}));
+// const ssmClient = tracer.captureAWSClient(new SSMClient({}));
+const ddbClient = tracer.captureAWSv3Client(new DynamoDBClient({region: region}));
+// tracer.captureAWSv3Client(ddbClient);
+// tracer.captureAWSv3Client(ssmClient);
 
 const getConsumeSqsUriInput = {
   Name: consts.CONSUME_TARGET_SQS_URI,
@@ -23,6 +29,13 @@ const sqsUriRes = await ssmClient.send(new GetParameterCommand(getConsumeSqsUriI
 const sqsNameRes = await ssmClient.send(new GetParameterCommand(getConsumeSqsNameInput));
 const sqsUri = sqsUriRes.Parameter.Value;
 const sqsName = sqsNameRes.Parameter.Value;
+console.log("@ sqsUriRes1 > ", sqsUriRes.Parameter)
+const sqsUriRes2 = await ssm.getParameter({Name: consts.CONSUME_TARGET_SQS_URI}).promise();
+const sqsNameRes2 = await ssm.getParameter(getConsumeSqsNameInput).promise();
+
+console.log("@ sqsUriRes2 > ", sqsUriRes2.Parameter)
+// const sqsUri = sqsUriRes.data.Parameter.Value;
+// const sqsName = sqsNameRes.data.Parameter.Value;
 const fromSqsUrl = sqsUri + '/' + sqsName;
 
 const getDdbTableInput = {
@@ -54,19 +67,19 @@ const customHandleMessage = async (m) => {
     // console.log('MESSAGE > ', m);
     logger.info('MESSAGE > ', m);
 
-    const attributes = m.Attributes;
-    const orderId = 'a50a1a1d-e1b2-4b12-8223-68357703cee4'; //attributes.orderId ?? uuidv4();
+    // const attributes = m.Attributes;
+    const orderId = JSON.parse(m.Body).orderId; //attributes.orderId ?? uuidv4();
     // const orderId = attributes.orderId ?? uuidv4();
     logger.info('orderId > ', orderId);
 
-    // const ddbGetInput = {
-    //   TableName: ddbTableName,
-    //   Key: {
-    //     orderId: {
-    //       S: orderId,
-    //     },
-    //   },
-    // };
+    const ddbGetInput = {
+      TableName: ddbTableName,
+      Key: {
+        orderId: {
+          S: orderId,
+        },
+      },
+    };
 
     const existedOrder = await ddbClient.send(new GetItemCommand(ddbGetInput));
     // logger.info('@ existedOrder > ', existedOrder.Item);
