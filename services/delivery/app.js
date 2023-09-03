@@ -1,5 +1,4 @@
-import { logger, ContextAwareSqsConsumer, tracer, ContextAwareSqsProducer, contextMiddleware, openSegment, closeSegment } from '@hdall/express';
-import { v4 as uuidv4 } from 'uuid';
+// import { logger, ContextAwareSqsConsumer, tracer, ContextAwareSqsProducer, contextMiddleware, openSegment, closeSegment } from '@hdall/express';
 import { DynamoDBClient, UpdateItemCommand, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm';
 import { consts } from './src/const/consts.js';
@@ -7,10 +6,9 @@ import { Consumer } from 'sqs-consumer';
 
 
 const ssmClient = new SSMClient();
-tracer.captureAWSv3Client(ssmClient);
+// tracer.captureAWSv3Client(ssmClient);
 const ddbClient = new DynamoDBClient();
-tracer.captureAWSv3Client(ddbClient);
-// const producer = new ContextAwareSqsProducer();
+// tracer.captureAWSv3Client(ddbClient);
 
 const getConsumeSqsUriInput = {
   Name: consts.CONSUME_TARGET_SQS_URI,
@@ -49,27 +47,22 @@ const getCurrentFormattedDate = () => {
 
 const customHandleMessage = async (m) => {
   try {
-    // console.log(`\n=========== ${fromSqsUrl} CONSUMER customHandleMessage =====================>`);
-    logger.info(`\n=========== ${fromSqsUrl} CONSUMER customHandleMessage =====================>`);
-    // console.log('MESSAGE > ', m);
-    logger.info('MESSAGE > ', m);
+    console.info(`\n=========== ${fromSqsUrl} CONSUMER customHandleMessage =====================>`);
+    console.info('MESSAGE > ', m);
 
-    const attributes = m.Attributes;
-    const orderId = 'a50a1a1d-e1b2-4b12-8223-68357703cee4'; //attributes.orderId ?? uuidv4();
-    // const orderId = attributes.orderId ?? uuidv4();
-    logger.info('orderId > ', orderId);
+    const body = JSON.parse(m.Body);
+    const orderId = body.orderId;
 
-    // const ddbGetInput = {
-    //   TableName: ddbTableName,
-    //   Key: {
-    //     orderId: {
-    //       S: orderId,
-    //     },
-    //   },
-    // };
+    const ddbGetInput = {
+      TableName: ddbTableName,
+      Key: {
+        orderId: {
+          S: orderId,
+        },
+      },
+    };
 
     const existedOrder = await ddbClient.send(new GetItemCommand(ddbGetInput));
-    // logger.info('@ existedOrder > ', existedOrder.Item);
 
     let ddbInput;
     const current = getCurrentFormattedDate();
@@ -90,27 +83,21 @@ const customHandleMessage = async (m) => {
             S: current,
           },
         },
-        // AttributeUpdates: {
-        //   event: {
-        //     Value: [{"DELIVERED" : current}],
-        //     Action: "PUT"
-        //   },
-        // },
         ReturnValues: 'ALL_NEW',
       };
 
       const response4 = await ddbClient.send(new UpdateItemCommand(ddbInput));
-      logger.info('@ UpdateItemCommand result >> ', response4);
+      console.info('@ UpdateItemCommand result >> ', response4.Attributes.orderId);
     } else {
-      logger.info('@ NO ORDER ID >> ', m);
+      console.info('@ NO ORDER ID >> ', m);
     }
   } catch (e) {
-    // logger.error(e, e.stack);
-    logger.error(e, e.stack);
+    // console.error(e, e.stack);
+    console.error(e, e.stack);
   }
 };
 
-const sqsConsumer = /*Consumer*/ContextAwareSqsConsumer.create({
+const sqsConsumer = /*ContextAwareSqsConsumer*/Consumer.create({
   messageAttributeNames: ['All'],
   queueUrl: fromSqsUrl,
   batchSize: 10,
@@ -119,8 +106,8 @@ const sqsConsumer = /*Consumer*/ContextAwareSqsConsumer.create({
 });
 
 sqsConsumer.on('error', (err) => {
-  logger.error(`error`, err);
+  console.error(`error`, err);
 });
 
-logger.info(`[init][SQS] polling with ${fromSqsUrl}`);
+console.info(`[init][SQS] polling with ${fromSqsUrl}`);
 sqsConsumer.start();

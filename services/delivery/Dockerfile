@@ -7,12 +7,10 @@ ARG AWS_SECRET_ACCESS_KEY
 
 WORKDIR /usr/src/app
 
-COPY hdall-express-0.0.2.tgz ./
 COPY package.json ./
 
 RUN npm config set strict-ssl false
 RUN npm install
-RUN npm install hdall-express-0.0.2.tgz
 
 COPY . .
 
