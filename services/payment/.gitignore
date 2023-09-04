@@ -4,6 +4,9 @@ layers/
 # archive
 extensions.zip
 
+# lcok file
+*-lock.json
+
 # for local
 local/
 **.tgz
