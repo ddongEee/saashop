@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "========  build layer: start  ========"
-
+REGION=$1
 rm -rf ./layers/heimdall/nodejs
 mkdir -p ./layers/nodejs/
 
@@ -18,7 +18,8 @@ zip -r nodejs.zip ./nodejs
 echo "==== build layer: publishing...  ====="
 aws lambda publish-layer-version \
     --layer-name "ts-workshop-heimdall" \
-    --zip-file  "fileb://nodejs.zip"
+    --zip-file  "fileb://nodejs.zip" \
+    --profile source --region ${REGION}
 
 echo "========  build layer: end  =========="
 
