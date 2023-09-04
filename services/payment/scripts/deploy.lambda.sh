@@ -3,7 +3,6 @@
 echo "========  deploy function: start  ========"
 FUNCTION_NAME=$1
 REGION=$2
-echo hi ${FUNCTION_NAME}
 cd ./src && zip -r lambda.zip .
 
 echo "==== deploy function: publishing...  ====="
