@@ -91,11 +91,11 @@ function transformLogEvent(logEvent, timestamp, logGroupName) {
     logData.timestamp = new Date(logEvent.timestamp);
     if (logGroupName.startsWith('/aws/lambda/')) {
       const caller = logGroupName.split('/')[3];
-      logData.caller = caller;
+      logData.caller = 'lambda: ' + caller;
       return JSON.stringify(logData) + '\n';
     } else if (logGroupName.startsWith('/aws/ecs/')) {
-      const container_name = logGroupName.split('/')[3];
-      logData.container_name = container_name;
+      const caller = logGroupName.split('/')[3];
+      logData.caller = 'ecs: ' + caller;
       return JSON.stringify(logData) + '\n';
     }
   }
