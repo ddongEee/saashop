@@ -19,6 +19,7 @@ import { generateLogGroup } from './common/utils';
 
 export class DeliveryService {
   constructor(scope: Construct, id: string, ecsCluster: Cluster, ecsTaskRole: Role, logDestinationArn: string) {
+    const ecsServiceName = 'DeliveryService';
     const deliveryImage = new DockerImageAsset(scope, id + 'DeliveryImage', {
       directory: path.join(__dirname, '../../../services/delivery/'),
     });
@@ -30,7 +31,14 @@ export class DeliveryService {
       dest: new ecrdeploy.DockerImageName(deliveryImageEcr.repositoryUri),
     });
 
-    const deliveryLogGroup = generateLogGroup(scope, id + 'DeliveryServiceLogGroup', 'ecs', logDestinationArn);
+    const deliveryLogGroup = generateLogGroup(
+      scope,
+      id + 'DeliveryServiceLogGroup',
+      'ecs',
+      logDestinationArn,
+      undefined,
+      ecsServiceName
+    );
 
     const deliveryTaskDefinition = new FargateTaskDefinition(scope, id + 'DeliveryTaskDefinition', {
       taskRole: ecsTaskRole,

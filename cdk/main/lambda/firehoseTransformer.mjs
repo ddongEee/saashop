@@ -93,8 +93,8 @@ function transformLogEvent(logEvent, timestamp, logGroupName) {
       const caller = logGroupName.split('/')[3];
       logData.caller = caller;
       return JSON.stringify(logData) + '\n';
-    } else if (logGroupName.startsWith('/ecs/')) {
-      const container_name = logGroupName.split('/')[2];
+    } else if (logGroupName.startsWith('/aws/ecs/')) {
+      const container_name = logGroupName.split('/')[3];
       logData.container_name = container_name;
       return JSON.stringify(logData) + '\n';
     }
