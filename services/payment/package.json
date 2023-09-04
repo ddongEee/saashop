@@ -2,12 +2,6 @@
   "name": "saashop-payment-service",
   "main": "index.mjs",
   "type": "module",
-  "dependencies": {
-    "aws-xray-sdk": "^3.5.1"
-  },
-  "devDependencies": {
-    "concurrently": "^8.2.0"
-  },
   "scripts": {
     "start": "node index.mjs",
     "local": "node local/index_local.mjs",
