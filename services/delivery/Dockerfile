@@ -7,7 +7,7 @@ ARG AWS_SECRET_ACCESS_KEY
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
+COPY package.json .npmrc ./
 
 RUN npm config set strict-ssl false
 RUN npm install
