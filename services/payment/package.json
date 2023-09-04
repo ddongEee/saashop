@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.mjs",
-    "local": "node local/index_local.mjs",
+    "deploy:lambda": "sh ./scripts/deploy.lambda.sh",
     "build:layer": "npm install --omit=dev && sh ./scripts/build.layer.local.sh"
   }
 }
