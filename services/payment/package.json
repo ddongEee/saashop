@@ -5,6 +5,6 @@
   "scripts": {
     "start": "node index.mjs",
     "deploy:lambda": "sh ./scripts/deploy.lambda.sh",
-    "build:layer": "npm install --omit=dev && sh ./scripts/build.layer.local.sh"
+    "deploy:layer": "npm install --omit=dev && sh ./scripts/build.layer.local.sh"
   }
 }

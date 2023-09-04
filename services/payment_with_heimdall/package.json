@@ -3,12 +3,12 @@
   "main": "index.mjs",
   "type": "module",
   "dependencies": {
-    "aws-xray-sdk": "^3.5.1",
-    "@hdall/lambda": "^1.0.0"
+    "@hdall/lambda": "^1.0.0",
+    "aws-xray-sdk": "^3.5.1"
   },
   "scripts": {
     "start": "node index.mjs",
     "deploy:lambda": "sh ./scripts/deploy.lambda.sh",
-    "build:layer": "npm install --omit=dev && sh ./scripts/build.layer.local.sh"
+    "deploy:layer": "npm install --omit=dev && sh ./scripts/build.layer.local.sh"
   }
 }
