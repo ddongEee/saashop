@@ -1,9 +1,6 @@
 # build output
 layers/
 
-# archive
-extensions.zip
-
 # lcok file
 *-lock.json
 
