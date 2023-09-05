@@ -17,6 +17,7 @@ ENV JAVA_TOOL_OPTIONS "-javaagent:/usr/local/order-service/disco/disco-java-agen
 ENV AWS_XRAY_TRACING_NAME "orderService"
 #local 에서 test 시..
 #ENV AWS_XRAY_DAEMON_ADDRESS "host.docker.internal:2000"
+#ENV AWS_XRAY_DAEMON_ADDRESS "xray-daemon:2000"
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-Dspring.profiles.active=${PROFILE}", "-Dspring.config.location=classpath:/application.properties", "-jar", "/usr/local/order-service/order-0.0.1-SNAPSHOT.jar"]
