@@ -20,9 +20,9 @@ const LOG_CONFIG = {
     'tenant.tenantId': 'tenantContext.tenantId',
     'tenant.tenantName': 'tenantContext.tenantName',
     'tenant.plan': 'tenantContext.tier',
-    'user.userId': 'userContext.userId',
-    'user.gender': 'userContext.gender',
-    'user.role': 'userContext.userRole',
+    'account.userId': 'userContext.userId',
+    'account.gender': 'userContext.gender',
+    'account.role': 'userContext.userRole',
   },
 };
 
