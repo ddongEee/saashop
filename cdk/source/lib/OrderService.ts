@@ -74,8 +74,7 @@ export class OrderService {
       logging: LogDriver.awsLogs({
         logGroup: orderServiceLogGroup,
         streamPrefix: 'orderService',
-      }),
-      environment: { SOURCE_REGION: stackRegion, AWS_XRAY_DAEMON_ADDRESS: 'xray-daemon:2000' },
+      })
     });
 
     appContainer.addPortMappings({
