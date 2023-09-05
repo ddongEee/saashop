@@ -1,4 +1,5 @@
 rootProject.name = 'saashop'
 include(':services:order')
+include(':services:order_with_heimdall')
 //include(':services:payment')
 //include(':services:delivery')
