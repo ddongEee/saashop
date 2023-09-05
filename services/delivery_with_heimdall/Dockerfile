@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM --platform=linux/amd64 node:18-alpine
+# FROM --platform=linux/amd64 node:18-alpine
 FROM node:18-alpine
 
 ARG AWS_ACCESS_KEY_ID

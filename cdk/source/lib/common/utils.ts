@@ -38,11 +38,13 @@ export const generateLogGroup = (
   platform: 'lambda' | 'ecs',
   logDestinationArn?: any,
   lambdaFunctionName?: string,
+  ecsServiceName?: string,
   retention: RetentionDays = RetentionDays.THREE_MONTHS
 ): LogGroup => {
   const logGroup =
     platform === 'ecs'
       ? new LogGroup(scope, id, {
+          logGroupName: '/aws/ecs/' + ecsServiceName,
           retention: retention,
           removalPolicy: RemovalPolicy.DESTROY,
         })

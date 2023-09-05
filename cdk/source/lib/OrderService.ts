@@ -29,6 +29,7 @@ export class OrderService {
     ecsTaskRole: Role,
     logDestinationArn: string
   ) {
+    const ecsServiceName = 'OrderService';
     const stackRegion = Stack.of(scope).region;
     const orderImage = new DockerImageAsset(scope, id + 'OrderImage', {
       directory: path.join(__dirname, '../../../services/order/'),
@@ -52,7 +53,14 @@ export class OrderService {
       '/summit/app/cloud.aws.queue.ordered-name',
       'techsummit-ordered-queue'
     );
-    const orderServiceLogGroup = generateLogGroup(scope, id + 'OrderServiceLogGroup', 'ecs', logDestinationArn);
+    const orderServiceLogGroup = generateLogGroup(
+      scope,
+      id + 'OrderServiceLogGroup',
+      'ecs',
+      logDestinationArn,
+      undefined,
+      ecsServiceName
+    );
 
     const orderTaskDefinition = new FargateTaskDefinition(scope, id + 'OrderTaskDefinition', {
       taskRole: ecsTaskRole,
@@ -67,7 +75,7 @@ export class OrderService {
         logGroup: orderServiceLogGroup,
         streamPrefix: 'orderService',
       }),
-      environment: { SOURCE_REGION: stackRegion, AWS_XRAY_DAEMON_ADDRESS: 'xray-daemon:2000' },
+      environment: { SOURCE_REGION: stackRegion },
     });
 
     appContainer.addPortMappings({

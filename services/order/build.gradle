@@ -27,7 +27,8 @@ dependencies {
 	implementation("io.awspring.cloud:spring-cloud-starter-aws-parameter-store-config:2.4.4")
 	implementation("com.amazonaws:aws-java-sdk-dynamodb:1.12.353")
 
-	implementation(files("./libs/spring-plain.jar"))
+	implementation("com.amazon.hdall:spring:0.0.1")
+//	implementation(files("./libs/spring-plain.jar"))
 	implementation("ch.qos.logback.contrib:logback-json-classic:0.1.5")
 	implementation("ch.qos.logback.contrib:logback-jackson:0.1.5")
 
