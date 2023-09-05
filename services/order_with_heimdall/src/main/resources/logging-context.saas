@@ -4,3 +4,5 @@ tenant.plan       =  tenantContext.plan
 account.userId    =  userContext.userId
 account.gender    =  userContext.gender
 account.role      =  userContext.role
+traceId           =  traceId
+requestId         =  requestId
