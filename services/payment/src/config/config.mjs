@@ -19,7 +19,7 @@ const LOG_CONFIG = {
   headerLogFormat: {
     'tenant.tenantId': 'tenantContext.tenantId',
     'tenant.tenantName': 'tenantContext.tenantName',
-    'tenant.plan': 'tenantContext.tier',
+    'tenant.plan': 'tenantContext.plan',
     'account.userId': 'userContext.userId',
     'account.gender': 'userContext.gender',
     'account.role': 'userContext.role',
