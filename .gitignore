@@ -224,4 +224,5 @@ docs
 !*SNAPSHOT.jar
 
 build/
+build/libs/*
 !build/libs/order-0.0.1-SNAPSHOT.jar
