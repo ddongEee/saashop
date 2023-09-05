@@ -223,6 +223,7 @@ docs
 # 샘플 jar 파일 포함
 !*SNAPSHOT.jar
 
-**/build/
-**/build/libs/*
-!**/build/libs/order-0.0.1-SNAPSHOT.jar
+
+#**/build/
+#**/build/libs/*
+#!**/build/libs/order-0.0.1-SNAPSHOT.jar
