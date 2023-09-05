@@ -22,7 +22,7 @@ const LOG_CONFIG = {
     'tenant.plan': 'tenantContext.tier',
     'account.userId': 'userContext.userId',
     'account.gender': 'userContext.gender',
-    'account.role': 'userContext.userRole',
+    'account.role': 'userContext.role',
   },
 };
 
