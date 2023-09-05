@@ -1,0 +1,35 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.1'
+	id 'io.spring.dependency-management' version '1.1.2'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '11'
+}
+
+
+repositories {
+	mavenCentral()
+	maven {
+		url 'https://saaswork.shop/repository/maven2-hosted/'
+	}
+}
+
+dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-logging")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("org.springframework.cloud:spring-cloud-starter-aws-messaging:2.2.6.RELEASE")
+	implementation("io.awspring.cloud:spring-cloud-starter-aws-parameter-store-config:2.4.4")
+	implementation("com.amazonaws:aws-java-sdk-dynamodb:1.12.353")
+
+	implementation("com.amazon.hdall:spring:0.0.1")
+	implementation("ch.qos.logback.contrib:logback-json-classic:0.1.5")
+	implementation("ch.qos.logback.contrib:logback-jackson:0.1.5")
+	implementation("com.amazonaws:aws-xray-recorder-sdk-core:2.14.0")
+	implementation("com.amazonaws:aws-xray-recorder-sdk-aws-sdk:2.14.0")
+}

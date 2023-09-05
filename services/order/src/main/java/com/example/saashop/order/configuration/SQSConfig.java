@@ -1,22 +1,20 @@
 package com.example.saashop.order.configuration;
 
-import com.amazon.sdk.spring.common.message.ContextAwareQueueMessagingTemplate;
-import com.amazon.sdk.spring.common.message.ContextAwareThreadPoolTaskExecutor;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
-import com.amazonaws.xray.AWSXRay;
-import com.amazonaws.xray.handlers.TracingHandler;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.aws.messaging.config.SimpleMessageListenerContainerFactory;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
+import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+// Todo : ADD : logging, tracing
+//import com.amazon.sdk.spring.common.message.ContextAwareQueueMessagingTemplate;
+//import com.amazonaws.xray.AWSXRay;
+//import com.amazonaws.xray.handlers.TracingHandler;
 
 @EnableSqs
 @Configuration
@@ -35,48 +33,16 @@ public class SQSConfig {
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(sqsUrl, region))
                 .withCredentials(awsCredentialsProvider);
         return amazonSQSAsyncClientBuilder
-                .withRequestHandlers(new TracingHandler(AWSXRay.getGlobalRecorder()))
+                // Todo : ADD : tracing
+//                .withRequestHandlers(new TracingHandler(AWSXRay.getGlobalRecorder()))
                 .build();
     }
 
+    // Todo : MODIFY : logging
     @Bean
-    public ContextAwareQueueMessagingTemplate queueMessagingTemplate(final Environment environment, final AWSCredentialsProvider awsCredentialsProvider) {
-        return new ContextAwareQueueMessagingTemplate(amazonSQSAsync(environment, awsCredentialsProvider), environment);
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
-
-    @Bean
-    public SimpleMessageListenerContainerFactory simpleMessageListenerContainerFactory(AmazonSQSAsync amazonSQSAsync, ThreadPoolTaskExecutor threadPoolTaskExecutorV2) {
-        SimpleMessageListenerContainerFactory factory = new SimpleMessageListenerContainerFactory();
-        factory.setAmazonSqs(amazonSQSAsync);
-        factory.setTaskExecutor(threadPoolTaskExecutorV2); // 변경
-        factory.setWaitTimeOut(20);
-        return factory;
-    }
-
-    @Bean
-    public ThreadPoolTaskExecutor threadPoolTaskExecutorV2() {
-        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(5);
-        threadPoolTaskExecutor.setMaxPoolSize(20);
-        threadPoolTaskExecutor.setQueueCapacity(0);
-        threadPoolTaskExecutor.setThreadNamePrefix("first-sqsThread-");
-        threadPoolTaskExecutor.initialize(); // 변경
-        return threadPoolTaskExecutor;
-    }
-
-    @Bean
-    public ContextAwareThreadPoolTaskExecutor ContextAwareThreadPoolTaskExecutor(final Environment environment) {
-        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(20);
-        threadPoolTaskExecutor.setMaxPoolSize(100);
-        threadPoolTaskExecutor.setQueueCapacity(0);
-        threadPoolTaskExecutor.setThreadNamePrefix("sqsThread-");
-//        threadPoolTaskExecutor.initialize(); // 변경
-        return new ContextAwareThreadPoolTaskExecutor(threadPoolTaskExecutor, environment);
+//    public ContextAwareQueueMessagingTemplate queueMessagingTemplate(final Environment environment, final AWSCredentialsProvider awsCredentialsProvider) {
+    public QueueMessagingTemplate queueMessagingTemplate(final Environment environment, final AWSCredentialsProvider awsCredentialsProvider) {
+//        return new ContextAwareQueueMessagingTemplate(amazonSQSAsync(environment, awsCredentialsProvider), environment);
+        return new QueueMessagingTemplate(amazonSQSAsync(environment, awsCredentialsProvider));
     }
 }
