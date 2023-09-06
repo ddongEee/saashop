@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "========  build layer: start  ========"
+echo "========  deploy layer: start  ========"
 REGION=$1
 rm -rf ./layers/heimdall/nodejs
 mkdir -p ./layers/nodejs/
@@ -15,12 +15,20 @@ rm -rf node_modules.zip
 cd ../
 zip -r nodejs.zip ./nodejs
 
-echo "==== build layer: publishing...  ====="
-aws lambda publish-layer-version \
+echo "==== deploy layer: publishing...  ====="
+output=$(aws lambda publish-layer-version \
     --layer-name "ts-workshop-heimdall" \
     --zip-file  "fileb://nodejs.zip" \
+    --profile source --region ${REGION})
+
+echo "====== deploy layer: adding... ======="
+LayerVersionArn=$(echo "$output" | grep -oP 'LayerVersionArn:\s+\K[^\n]+')
+export LayerVersionArn
+echo 'LambdaLayerVersionArn is '$LayerVersionArn
+aws lambda update-function-configuration \
+    --function-name $LambdaFunctionName \
+    --layers $LayerVersionArn \
     --profile source --region ${REGION}
 
-echo "========  build layer: end  =========="
-
+echo "========  deploy layer: end  =========="
 rm -rf nodejs.zip
