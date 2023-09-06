@@ -29,6 +29,7 @@ export class LogBucket {
       encryption: BucketEncryption.S3_MANAGED,
       enforceSSL: true,
       removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
     });
 
     const s3KmsKey = new Key(scope, id + '-s3-kms-key', {
@@ -50,7 +51,6 @@ export class LogBucket {
 
     this.firehoseDestBucket = new Bucket(scope, id + '-dest-bucket', {
       removalPolicy: RemovalPolicy.DESTROY,
-      versioned: true,
       accessControl: BucketAccessControl.PRIVATE,
       publicReadAccess: false,
       blockPublicAccess: new BlockPublicAccess(BlockPublicAccess.BLOCK_ALL),
@@ -61,6 +61,7 @@ export class LogBucket {
       serverAccessLogsBucket: s3AccessLogBucket,
       serverAccessLogsPrefix: `s3/${targetProfile}-applog-from-${targetRegion}/`,
       eventBridgeEnabled: true,
+      autoDeleteObjects: true,
     });
 
     // allow the principal to have all admin access to bucket
@@ -91,6 +92,7 @@ export class LogBucket {
       serverAccessLogsPrefix: `s3/${targetProfile}-firehose-backup-bucket/`,
       serverAccessLogsBucket: s3AccessLogBucket,
       removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
     });
 
     // resource policy 추가해야함
@@ -100,6 +102,7 @@ export class LogBucket {
       serverAccessLogsPrefix: 's3/data-prepper-failed/',
       serverAccessLogsBucket: s3AccessLogBucket,
       removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
     });
 
     this.firehoseRole = new Role(scope, id + '-firehoseRole', {
