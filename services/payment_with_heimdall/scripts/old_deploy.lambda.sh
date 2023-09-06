@@ -1,13 +1,8 @@
 #!/bin/sh
 
 echo "========  deploy function: start  ========"
-REGION=$1
-FUNCTION_NAME=$(aws lambda list-functions \
-    --query "Functions[?starts_with(FunctionName, 'SourceStack-SourceStackPaymentService')].FunctionName" \
-    --output text \
-    --profile source --region $REGION)
-echo 'LambdaFunctionName is '$FUNCTION_NAME
-
+FUNCTION_NAME=$1
+REGION=$2
 cd ./src && zip -r lambda.zip .
 
 echo "==== deploy function: publishing...  ====="
