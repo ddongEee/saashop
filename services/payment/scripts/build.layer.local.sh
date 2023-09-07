@@ -22,6 +22,8 @@ output=$(aws lambda publish-layer-version \
     --profile source --region ${REGION})
 
 echo "====== deploy layer: adding... ======="
+export LambdaFunctionName=$(aws lambda list-functions --query "Functions[?starts_with(FunctionName, 'SourceStack-SourceStackPaymentService')].FunctionName" --output text --profile source --region $SRC_REGION)
+
 LayerVersionArn=$(echo "$output" | grep -oP 'LayerVersionArn:\s+\K[^\n]+')
 export LayerVersionArn
 echo 'LambdaLayerVersionArn is '$LayerVersionArn
