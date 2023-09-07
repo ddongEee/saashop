@@ -6,11 +6,11 @@ import { getConfig } from '../lib/common/utils';
 const app = new cdk.App();
 
 const mainProfile = app.node.tryGetContext('main');
-const mainAccount = getConfig(mainProfile).get('main.account').toString();
+const mainAccount = getConfig(mainProfile).get('main.account').toString().padStart(12, 0);
 const mainRegion = getConfig(mainProfile).get('main.region');
 
 const targetProfile = app.node.tryGetContext('target');
-const targetAccount = getConfig(mainProfile).get(`${targetProfile}.account`).toString();
+const targetAccount = getConfig(mainProfile).get(`${targetProfile}.account`).toString().padStart(12, 0);
 const targetRegion = getConfig(mainProfile).get(`${targetProfile}.region`);
 
 const mainEnv = {
